@@ -12,21 +12,6 @@
 #define THRESHOLD 3
 
 
-/**********************************************************************
- *  You should :                                                      *
- *   1) carefully read over the writeup on piazza                     *
- *   2) carefully read over the code                                  *
- *   3) run make test to see how the reference binary behaves         *
- *   4) find the locations you need to add code and progressively     *
- *      update your code till it behaves the same as the reference.   *
- *      Don't forget to commit regularly as you conduct your work     *
- *                                                                    *
- *  Each function documents how it should behave.                     *
- *  If you are unsure about how your program should work use the      *
- *  the reference executable provided to understand what the correct  *
- *  behavior is.  When you run make test you see a series of          *
- *  inputs that we will be testing your program with.                 *
-/**********************************************************************/
 
 /* function prototypes */
 /*  See function definitions below for documentation */
@@ -53,16 +38,11 @@ int main() {
       printf("ERROR: sequence 1 is bad.  Exiting\n");
       return -1;
     }
-    // FIXME: You need to finish the main function
-    
-    // FIXME: 2: Read target input sequence into s2 array
-    if (read_sequence(s2, 5) == 0){
+
+    if (read_sequence(s2, 5) == 0){ //checking for error in 2nd sequence
       printf("ERROR: sequence 2 is bad.  Exiting\n");
       return -1;
     }
-
-    // FIXME: 3: Call match function to look for match and print merged
-    // sequence if a match is found
 
     match(s1, s2, 20, 5, THRESHOLD); //calls match function
 
@@ -72,44 +52,20 @@ int main() {
     return 0;
 }
 
-/****************************************************************************
- * Prints a sequence part indicated by the start and end (excluded) indices.*
- ****************************************************************************/
+/*Prints a sequence part indicated by the start and end (excluded) indices.*/
+
 void print_sequence_part(const char s[], int start, int end) {
     for (int i=start; i<end; i++) {
         printf("%c", s[i]);
     }
 }
 
-/****************************************************************************
- * Prints a sequence of bases.                                              *
- ****************************************************************************/
+/* Prints a sequence of bases.                                              */
 void print_sequence(const char s[], int len) {
     print_sequence_part(s, 0, len);
 }
 
-/****************************************************************************
- * Prompts the user to input a seq_len sequence and press Enter/Return      *
- * reads a sequence of bases (A, T, C, G) and stores it in s.               *
- * Invalid bases (values that not one of the four valid bases) are ignored. *
- * If the  sequence inputed is too short then return false                  *
- *                                                                          *
- * A newline '\n' is generated when the user presses the Enter or Return    *
- * key. In such cases scanf will read the special ascii value '\n' into the *
- * variable.                                                                *  
- *                                                                          *
- * In our case we should continue to read values until we encounter a       *
- * newline.  Prior to reading a newline each valid base should be stored    *
- * consecutively into the s array until seq_len valid values have been      *
- * read.  Any addtioinal values should be ignored.                          *
- * eg.                                                                      *
- *   assuming seq_len=3                                                     *
- *    INPUT: "AGG\n"->  s[0]='A' s[1]='G' s[2]='G' return true              *
- *    INPUT: "aAgGqGv\n"->  s[0]='A' s[1]='G' s[2]='G' return true          *
- *    INPUT: "A\n"-> s[0]='A' return false                                  *
- *    INPUT: "aaaaaaaaaaaaaa' -> return false                               *
- *    INPUT: "AGGTAGGT" -> s[0]='A' s[1]='G' s[2]='G' return true           *
- ****************************************************************************/
+
 _Bool read_sequence(char s[], int seq_len) {
     char b;
     int i = 0;
@@ -120,7 +76,7 @@ _Bool read_sequence(char s[], int seq_len) {
 
     
     // Loop until new line 
-    // FIXME: ADD your loop here
+
       while(b != '\n'){
       int valid = is_valid_base(b);
       if(valid == 1){ //checks if the input is valid
@@ -143,13 +99,11 @@ _Bool read_sequence(char s[], int seq_len) {
     return 1;
 }
 
-/****************************************************************************
- * Checks whether the input character represents a valid base.              *
+/* Checks whether the input character represents a valid base.              *
  * Returns false if b is not in the bases array which is preloaded with     *
- *  'A', 'C', 'G', 'T'.                                                     *
- ****************************************************************************/
+ *  'A', 'C', 'G', 'T'.                        
+ */
 _Bool is_valid_base(char b) {
-  // FIXME: Add a loop here that compares the input b to elements of the bases array
   
   for(int i = 0; i < NUM_BASES; i++ ){
     if (b == bases[i]){ //checking if char is in bases array
@@ -160,83 +114,14 @@ _Bool is_valid_base(char b) {
   return 0;
 }
 
-/****************************************************************************
- *  This function will do the real work to try and match the two DNA        *
+/*  This function will do the real work to try and match the two DNA        *
  *  sequences. In this case, the base sequence (variable s1) will be the    * 
  *  DNA sequence we are trying to reconstruct, and its length is stored in  *
  *  the variable len1. The target sequence (s2) will be the DNA sequence    * 
  *  that we are trying to match to the base sequence to determine if it is  *
  *  a part of that sequence, and its length is stored in len2.              *
  *                                                                          *
- *  This function needs to detect matches, and return whether or not a      *
- *  match was found. Additionally, this function needs to print out one of  *
- *  two possibilities, depending on if a match was found. If a match was    *
- *  found, the function needs to print out "A match was found" and then the *
- *  concatenated sequence. You can use the print_sequence_part function to  *
- *  help with printing out the concatenated sequence. If a match was not    *
- *  found, the function needs to print out "No match found".                *
- *                                                                          *
- *  There are two cases for matching that the function should check for.    *
- *  First is if the target sequence appears inside the base sequence        *
- *  itself.                                                                 *
- *  For example:                                                            *
- *                                                                          *
- *  Base: AAACTGGGT             =>  A match was found.                      *
- *  Target: ACTGG                   AAACTGGGT                               *
- *                                                                          *
- *  This would be a match because the target string ACTGG appears fully     *
- *  within the base seqeunce.                                               *
- *                                                                          *
- *  The other case is if the base sequence is a proper prefix to the target *
- *  string (the last bases of base sequence are the same as the first bases *
- *  of the target sequence) AND the length of the overlap is equal to or    *
- *  greater than the threshold. For example, assuming a threshold of 3:     *
- *                                                                          *
- *  Base: AAACTGGG              =>  A match was found.                      *
- *  Target:    GGGTC                AAACTGGGTC                              *
- *                                                                          *
- *  Base: AAACTGGG              =>  No match found.                         *
- *  Target:     GGACT                                                       *
- *                                                                          *
- *  The first example is a match because GGG is the last 3 bases of the     *
- *  base and the first 3 bases of the target. The second example is NOT a   *
- *  match because only 2 bases overlap.                                     *
- *                                                                          *
- *  One way to implement this is by lining up s2 at the end of s1 so that   *
- *  they have `threshold` bases overlap. If no valid match is found, slide  *
- *  s2 to left by one position. Repeat until either a match is found or no  *
- *  overlap >= threshold is possible anymore.                               *
- *                                                                          *
- *  Example:                                                                * 
- *  --------                                                                * 
- *  s1 = CCGTTACAGG, s2 = TACAG, threshold = 3                              * 
- *                                                                          * 
- *  CCGTTACAGG                                                              * 
- *         TACAG                                                            * 
- *                                                                          * 
- *  CCGTTACAGG                                                              * 
- *        TACAG                                                             * 
- *                                                                          * 
- *  CCGTTACAGG                                                              * 
- *       TACAG                                                              * 
- *                                                                          * 
- *  CCGTTACAGG                  =>  A match was found.                      *
- *      TACAG                       CCGTTACAGG                              *
- *                                                                          *
- *                                                                          *
- *  -----                                                                   *
- *  BONUS                                                                   *
- *  -----                                                                   *
- *  For bonus points, add functionality to detect matches where the target  *
- *  sequence is a proper prefix to the base sequence. For example:          *
- *                                                                          *
- *  Base:     AAACTGGG          =>  A match was found.                      *
- *  Target: GTAAA                   GTAAACTGGG                              *
- *                                                                          *
- *  This would be a match because because AAA is the last 3 bases of the    *
- *  target sequence and the first 3 bases of the base sequence.             *
- *                                                                          *
- ****************************************************************************/
+ **/
 _Bool match(const char s1[], const char s2[],
      int len1, int len2, int threshold) {
    // FIXME:  This is where the real work has to happen 
@@ -280,14 +165,7 @@ _Bool match(const char s1[], const char s2[],
                 }
               }
             }
-      
           }
-          
-   
-      
-      
-      
-
 
     printf("No match found.\n");
     return 0;
